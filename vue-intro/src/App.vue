@@ -1,14 +1,22 @@
 <template>
   <h1>How fancy are your fingers?</h1>
   <div>
-    <span
-    :key="word.position"
-     v-for="word in fetchedText">
-      {{ word.text }} {{ '' }}
-    </span>
+     <span v-bind:class = "{ 
+          correct: word.correct,
+          wrong: word.wrong,
+          pending: word.pending,
+      }"
+      :key="word.position" 
+      v-for="word in fetchedText">{{ word.text }} {{ '' }}</span>
   </div>
-  <textarea name="" id="" cols="30" rows="10"  :value="inputValue"></textarea>
-  <button @click = fetchData()>Click</button>
+  <textarea
+    name=""
+    id=""
+    cols="30"
+    rows="10"
+    @keyup.space="processInput($event)"
+  ></textarea>
+  <button @click="fetchData()">Click</button>
 </template>
 
 <script>
@@ -24,18 +32,54 @@ export default {
     async fetchData() {
       const response = await fetch("text/find_you.txt");
       const data = await response.text();
-      let obj = data.trim().split(" ").map((word, index) => { 
-        return {
-
+      let obj = data
+        .trim()
+        .split(" ")
+        .map((word, index) => {
+          return {
             position: index,
             text: word,
             correct: false,
             wrong: false,
-            pending: true
-        }
-     })
-      return this.fetchedText = obj;
+            pending: true,
+          };
+        });
+      return (this.fetchedText = obj);
+    },
+    processInput(event) {
+      event.preventDefault();
+      this.inputValue = event.target.value.trim();
+
+      if (this.inputValue === "") {
+        return;
+      }
+      if (this.fetchedText[this.index].text === this.inputValue) {
+        //correct answer
+        this.fetchedText[this.index].correct = true;
+        this.fetchedText[this.index].wrong = false;
+        this.fetchedText[this.index].pending = false;
+      } else {
+        //wrong answer
+        this.fetchedText[this.index].correct = false;
+        this.fetchedText[this.index].wrong = true;
+        this.fetchedText[this.index].pending = false;
+      }
+      this.index++;
     },
   },
 };
 </script>
+
+<style scoped>
+.pending {
+    font-weight: bold;
+}
+.correct {
+    font-weight: bold;
+    color: green;
+}
+.wrong{
+    font-weight: bold;
+    color: red;
+}
+</style>
