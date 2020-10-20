@@ -1,5 +1,6 @@
 <template>
   <h1>How fancy are your fingers?</h1>
+  <div class="timer">{{ `${count} sec` }}</div>
   <div>
      <span v-bind:class = "{ 
           correct: word.correct,
@@ -16,7 +17,7 @@
     rows="10"
     @keyup.space="processInput($event)"
   ></textarea>
-  <button @click="fetchData()">Click</button>
+  <button @click="fetchData(), runTimer()">Click</button>
 </template>
 
 <script>
@@ -25,6 +26,7 @@ export default {
     return {
       inputValue: "",
       index: 0,
+      count: 0,
       fetchedText: [],
     };
   },
@@ -45,6 +47,11 @@ export default {
           };
         });
       return (this.fetchedText = obj);
+    },
+    runTimer(){
+        setInterval(() => {
+            ++this.count
+        }, 1000)
     },
     processInput(event) {
       event.preventDefault();
@@ -88,6 +95,19 @@ body{
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0px 0px 10px #929292;
+}
+.timer {
+  background-color: #111;
+  color: #fefefe;
+  min-width: 20px;
+  max-width: 50px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 2px;
+  border-radius: 4px;
+  /* opacity: 0; */
 }
 .pending {
     font-weight: bold;
