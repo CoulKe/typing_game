@@ -1,6 +1,8 @@
 <template>
   <h1 id="game_slogan" v-if="!display" style="display: block" >How fancy are your fingers?</h1>
   <div class="timer" v-if="display" style="display: flex">{{ `Timer: ${count} sec`}}</div>
+  <div class="score">Score: {{ fetchedText.filter(word =>
+      word.correct).length }}/ {{ fetchedText.length }}</div>
   <div>
     <span
       v-bind:class="{
@@ -22,6 +24,7 @@
     v-if="display" style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()">Start game</button>
+  <button @click="fetchData(), runTimer()">Stop game</button>
 </template>
 
 <script>
@@ -106,6 +109,7 @@ body {
   button{
     font-weight: bold;
     color: #fff;
+    cursor: pointer;
     background-color: #663399;
   }
   #game_slogan{
@@ -118,7 +122,6 @@ body {
     color: #fefefe;
     min-width: 20px;
     max-width: 100px;
-    margin: auto auto;
     height: 30px;
     align-content: center;
     justify-content: center;
@@ -131,11 +134,11 @@ body {
   }
   .correct {
     font-weight: bold;
-    color: green;
+    color: blue;
   }
   .wrong {
     font-weight: bold;
-    color: red;
+    border-bottom: 2px dotted #ff0000;
   }
 }
 
