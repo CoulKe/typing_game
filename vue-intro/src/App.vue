@@ -72,7 +72,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+body{
+  background-color: #80deee;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#app{
+  background-color: #f6fdff;
+  max-width: 50%;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0px 0px 10px #929292;
+}
 .pending {
     font-weight: bold;
 }
@@ -83,5 +98,19 @@ export default {
 .wrong{
     font-weight: bold;
     color: red;
+}
+textarea {
+  width: 99%;
+  max-width: 800px;
+  border-radius: 8px;
+}
+textarea:focus {
+  outline: 2px solid #03bcdd;
+}
+textarea::placeholder {
+  padding: 1rem;
+  font-size: larger;
+  color: #757272;
+  margin: auto;
 }
 </style>
