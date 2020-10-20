@@ -74,6 +74,7 @@ export default {
 
 <style>
 body{
+  user-select: none;
   background-color: #80deee;
   min-height: 100vh;
   display: flex;
