@@ -48,12 +48,14 @@ export default {
     },
     processInput(event) {
       event.preventDefault();
-      this.inputValue = event.target.value.trim();
+      this.inputValue = event.target.value.trim().split(" ");
+      
+      console.log(this.inputValue.length)
 
       if (this.inputValue === "") {
         return;
       }
-      if (this.fetchedText[this.index].text === this.inputValue) {
+      if (this.fetchedText[this.index].text === this.inputValue[this.inputValue.length - 1]) {
         //correct answer
         this.fetchedText[this.index].correct = true;
         this.fetchedText[this.index].wrong = false;
