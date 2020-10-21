@@ -1,5 +1,5 @@
 {
-  "name": "vue-intro",
+  "name": "typing-game",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -41,5 +41,17 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "description": "A project made with vue js and uses fetch Api to randomly generate text to test your typing speed.",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoulKe/typing_game.git"
+  },
+  "author": "Luteya Coulston",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CoulKe/typing_game/issues"
+  },
+  "homepage": "https://github.com/CoulKe/typing_game#readme"
 }
