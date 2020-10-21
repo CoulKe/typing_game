@@ -2,16 +2,15 @@
   <h1 id="game_slogan" v-if="!display" style="display: block">
     How fancy are your fingers?
   </h1>
-  <div class="gameBar" v-if="display" style="display: flex">
-    <div class="timer">
+  <div class="gameBar">
+    <div class="timer" v-if="display" style="opacity: 1">
       {{ `Timer: ${count} sec` }}
     </div>
     <div class="score">
-      Score: {{ fetchedText.filter((word) => word.correct).length }}/
-      {{ fetchedText.length }}
+      Score: {{ score }}
     </div>
   </div>
-  <div>
+  <div v-if="display" style="display: block">
     <span
       v-bind:class="{
         correct: word.correct,
@@ -33,8 +32,8 @@
     v-if="display"
     style="display: block"
   ></textarea>
-  <button @click="fetchData(), runTimer()">Start game</button>
-  <button @click="stopTimer()">Stop game</button>
+  <button @click="fetchData(), runTimer()" id="startButton" v-if="!display" style="display: inline">Start game</button>
+  <button @click="stopTimer()" id="stopButton" v-if="display" style="display: inline">Stop game</button>
 </template>
 
 <script>
@@ -53,6 +52,12 @@ export default {
       ],
     };
   },
+  computed: {
+    score(){
+      return `${this.fetchedText.filter((word) => word.correct).length} / ${this.fetchedText.length}`
+    }
+  }
+  ,
   methods: {
     // rand(){
     //   let randIndex =  Math.floor(Math.random() * this.poems.length) + 1
@@ -85,6 +90,7 @@ export default {
     },
     stopTimer() {
       this.count = 0;
+      this.display = false;
       clearInterval(this.myTimer);
     },
     processInput(event) {
@@ -93,6 +99,11 @@ export default {
       this.inputValue = event.target.value.trim().split(/\s+/);
 
       if (this.inputValue === "") {
+        return;
+      }
+      if (this.index >= this.fetchedText.length) {
+        this.display = false;
+        this.index = 0;
         return;
       }
       if (
@@ -109,12 +120,14 @@ export default {
         this.fetchedText[this.index].wrong = true;
         this.fetchedText[this.index].pending = false;
       }
-      this.index++;
+      
+      ++this.index
     },
   },
 };
 </script>
 
+<!-- Using sass -->
 <style lang="scss">
 body {
   user-select: none;
@@ -147,6 +160,9 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
+    .timer{
+      opacity: 0;
+    }
     .score,
     .timer {
       background-color: #111;
@@ -186,6 +202,12 @@ textarea {
     font-size: larger;
     color: #757272;
     margin: auto;
+  }
+  #startButton{
+    display: none;
+  }
+  #stopButton{
+    display: none;
   }
 }
 </style>
