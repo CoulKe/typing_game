@@ -1,8 +1,16 @@
 <template>
-  <h1 id="game_slogan" v-if="!display" style="display: block" >How fancy are your fingers?</h1>
-  <div class="timer" v-if="display" style="display: flex">{{ `Timer: ${count} sec`}}</div>
-  <div class="score">Score: {{ fetchedText.filter(word =>
-      word.correct).length }}/ {{ fetchedText.length }}</div>
+  <h1 id="game_slogan" v-if="!display" style="display: block">
+    How fancy are your fingers?
+  </h1>
+  <div class="gameBar" v-if="display" style="display: flex">
+    <div class="timer">
+      {{ `Timer: ${count} sec` }}
+    </div>
+    <div class="score">
+      Score: {{ fetchedText.filter((word) => word.correct).length }}/
+      {{ fetchedText.length }}
+    </div>
+  </div>
   <div>
     <span
       v-bind:class="{
@@ -22,7 +30,8 @@
     rows="10"
     @keyup.space="processInput($event)"
     @keyup.enter="processInput($event)"
-    v-if="display" style="display: block"
+    v-if="display"
+    style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()">Start game</button>
   <button @click="stopTimer()">Stop game</button>
@@ -37,19 +46,24 @@ export default {
       display: false,
       count: 0,
       fetchedText: [],
-      poems: ['my_name_in_love_language.txt','she_loves_me.txt', 'when_I_find_you.txt'],
+      poems: [
+        "my_name_in_love_language.txt",
+        "she_loves_me.txt",
+        "when_I_find_you.txt",
+      ],
     };
   },
   methods: {
     // rand(){
     //   let randIndex =  Math.floor(Math.random() * this.poems.length) + 1
-      
+
     // },
     async fetchData() {
       const response = await fetch("text/she_loves_me.txt");
       const data = await response.text();
       let obj = data
         .trim()
+        // Include non space characters including \r or \n
         .split(/\s+/)
         .map((word, index) => {
           return {
@@ -58,7 +72,7 @@ export default {
             correct: false,
             wrong: false,
             pending: true,
-            myTimer: '',
+            myTimer: "",
           };
         });
       return (this.fetchedText = obj);
@@ -69,12 +83,13 @@ export default {
         ++this.count;
       }, 1000);
     },
-    stopTimer(){
-      this.count = 0
+    stopTimer() {
+      this.count = 0;
       clearInterval(this.myTimer);
     },
     processInput(event) {
       event.preventDefault();
+      // Include non space characters including \r or \n
       this.inputValue = event.target.value.trim().split(/\s+/);
 
       if (this.inputValue === "") {
@@ -117,28 +132,31 @@ body {
   padding: 1rem;
   box-shadow: 0px 0px 10px #929292;
 
-  button{
+  button {
     font-weight: bold;
     color: #fff;
     cursor: pointer;
     background-color: #663399;
   }
-  #game_slogan{
+  #game_slogan {
     text-align: center;
     margin: 0px;
     display: none;
   }
-  .timer {
-    background-color: #111;
-    color: #fefefe;
-    min-width: 20px;
-    max-width: 100px;
-    height: 30px;
-    align-content: center;
-    justify-content: center;
-    padding: 2px;
-    border-radius: 4px;
-    display: none;
+  .gameBar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    .score,
+    .timer {
+      background-color: #111;
+      color: #fefefe;
+      min-width: 20px;
+      max-width: 100px;
+      height: 100%;
+      padding: 4px;
+      border-radius: 4px;
+    }
   }
   .pending {
     font-weight: bold;
@@ -158,7 +176,7 @@ textarea {
   max-width: 800px;
   border-radius: 8px;
   display: none;
-  
+
   &:focus {
     outline: 2px solid #03bcdd;
     border-radius: 0px;
