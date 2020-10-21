@@ -6,6 +6,7 @@
     <div class="timer" v-if="display" style="opacity: 1">
       {{ `Timer: ${count} sec` }}
     </div>
+    <p v-if="display" style="opacity: 1">Press enter to submit progress</p>
     <div class="score">
       Score: {{ score }}
     </div>
@@ -51,6 +52,7 @@ export default {
         "when_I_find_you.txt",
       ],
     };
+    
   },
   computed: {
     score(){
@@ -59,12 +61,12 @@ export default {
   }
   ,
   methods: {
-    // rand(){
-    //   let randIndex =  Math.floor(Math.random() * this.poems.length) + 1
-
-    // },
+    randPoem(){
+      let r = Math.floor(Math.random() * this.poems.length)
+      return r;
+    },
     async fetchData() {
-      const response = await fetch("text/she_loves_me.txt");
+      const response = await fetch(`text/${this.poems[this.randPoem()]}`);
       const data = await response.text();
       let obj = data
         .trim()
