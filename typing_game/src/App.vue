@@ -1,5 +1,6 @@
 <template>
-  <h1 id="game_slogan" v-if="!display" style="display: block">
+  <div class="">
+    <h1 id="game_slogan" v-if="!display" style="display: block">
     How fancy are your fingers?
   </h1>
   <div class="gameBar">
@@ -34,7 +35,8 @@
     style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()" id="startButton" v-if="!display" style="display: inline">Start game</button>
-  <button @click="stopTimer()" id="stopButton" v-if="display" style="display: inline">Quit</button>
+  <button @click="stopTimer(), this.index = 0;" id="stopButton" v-if="display" style="display: inline">Quit</button>
+  </div>
 </template>
 
 <script>
@@ -93,7 +95,6 @@ export default {
     },
     stopTimer() {
       this.count = 0;
-      this.index = 0;
       this.display = false;
       clearInterval(this.myTimer);
     },
@@ -101,6 +102,7 @@ export default {
       event.preventDefault();
       // Include non space characters including \r or \n
       this.inputValue = event.target.value.trim().split(/\s+/);
+      this.stopTimer()
 
       //To avoid index error
       if (this.index >= this.fetchedText.length) {
@@ -123,7 +125,6 @@ export default {
       }
       
       ++this.index
-      this.display = false;
     },
     processInput(event) {
       event.preventDefault();
