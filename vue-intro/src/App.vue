@@ -21,6 +21,7 @@
     cols="30"
     rows="10"
     @keyup.space="processInput($event)"
+    @keyup.enter="processInput($event)"
     v-if="display" style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()">Start game</button>
@@ -36,15 +37,16 @@ export default {
       display: false,
       count: 0,
       fetchedText: [],
+      poems: [],
     };
   },
   methods: {
     async fetchData() {
-      const response = await fetch("text/find_you.txt");
+      const response = await fetch("text/she_loves_me.txt");
       const data = await response.text();
       let obj = data
         .trim()
-        .split(" ")
+        .split(/\s+/)
         .map((word, index) => {
           return {
             position: index,
@@ -64,7 +66,7 @@ export default {
     },
     processInput(event) {
       event.preventDefault();
-      this.inputValue = event.target.value.trim().split(" ");
+      this.inputValue = event.target.value.trim().split(/\s+/);
 
       if (this.inputValue === "") {
         return;
