@@ -1,4 +1,6 @@
-# vue-intro
+# Typing Game
+A project made with vue js and uses fetch Api to randomly
+generate text to test your typing speed.
 
 ## Project setup
 ```
