@@ -25,7 +25,7 @@
     v-if="display" style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()">Start game</button>
-  <button @click="fetchData(), runTimer()">Stop game</button>
+  <button @click="stopTimer()">Stop game</button>
 </template>
 
 <script>
@@ -37,10 +37,14 @@ export default {
       display: false,
       count: 0,
       fetchedText: [],
-      poems: [],
+      poems: ['my_name_in_love_language.txt','she_loves_me.txt', 'when_I_find_you.txt'],
     };
   },
   methods: {
+    // rand(){
+    //   let randIndex =  Math.floor(Math.random() * this.poems.length) + 1
+      
+    // },
     async fetchData() {
       const response = await fetch("text/she_loves_me.txt");
       const data = await response.text();
@@ -54,15 +58,20 @@ export default {
             correct: false,
             wrong: false,
             pending: true,
+            myTimer: '',
           };
         });
       return (this.fetchedText = obj);
     },
     runTimer() {
       this.display = true;
-      setInterval(() => {
+      this.myTimer = setInterval(() => {
         ++this.count;
       }, 1000);
+    },
+    stopTimer(){
+      this.count = 0
+      clearInterval(this.myTimer);
     },
     processInput(event) {
       event.preventDefault();
