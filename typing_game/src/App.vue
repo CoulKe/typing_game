@@ -28,12 +28,12 @@
     cols="30"
     rows="10"
     @keyup.space="processInput($event)"
-    @keyup.enter="processInput($event)"
+    @keyup.enter="submitProgress($event)"
     v-if="display"
     style="display: block"
   ></textarea>
   <button @click="fetchData(), runTimer()" id="startButton" v-if="!display" style="display: inline">Start game</button>
-  <button @click="stopTimer()" id="stopButton" v-if="display" style="display: inline">Stop game</button>
+  <button @click="stopTimer()" id="stopButton" v-if="display" style="display: inline">Quit</button>
 </template>
 
 <script>
@@ -84,14 +84,44 @@ export default {
     },
     runTimer() {
       this.display = true;
+      this.index = 0
       this.myTimer = setInterval(() => {
         ++this.count;
       }, 1000);
     },
     stopTimer() {
       this.count = 0;
+      this.index = 0;
       this.display = false;
       clearInterval(this.myTimer);
+    },
+    submitProgress(event){
+      event.preventDefault();
+      // Include non space characters including \r or \n
+      this.inputValue = event.target.value.trim().split(/\s+/);
+
+      //To avoid index error
+      if (this.index >= this.fetchedText.length) {
+        this.display = false;
+        return;
+      }
+      if (
+        this.fetchedText[this.index].text ===
+        this.inputValue[this.inputValue.length - 1]
+      ) {
+        //correct answer
+        this.fetchedText[this.index].correct = true;
+        this.fetchedText[this.index].wrong = false;
+        this.fetchedText[this.index].pending = false;
+      } else {
+        //wrong answer
+        this.fetchedText[this.index].correct = false;
+        this.fetchedText[this.index].wrong = true;
+        this.fetchedText[this.index].pending = false;
+      }
+      
+      ++this.index
+      this.display = false;
     },
     processInput(event) {
       event.preventDefault();
@@ -101,9 +131,9 @@ export default {
       if (this.inputValue === "") {
         return;
       }
+      //To avoid index error
       if (this.index >= this.fetchedText.length) {
         this.display = false;
-        this.index = 0;
         return;
       }
       if (
