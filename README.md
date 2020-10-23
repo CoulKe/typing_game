@@ -2,6 +2,9 @@
 A project made with vue js and uses fetch Api to randomly
 generate text to test your typing speed.
 
+# Note:
+This project is not responsive, currently only available for desktop
+
 ## Project setup
 ```
 npm install
