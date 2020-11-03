@@ -7,7 +7,12 @@
     <div class="timer" v-if="display" style="opacity: 1">
       {{ `Timer: ${count} sec` }}
     </div>
-    <p v-if="display" style="opacity: 1">Press enter to submit progress</p>
+    <p v-if="display" style="opacity: 1;
+    background-color: yellow;
+    color: #000;
+    padding: 1rem;
+    font-weight: 900;
+    ">Press enter to submit progress</p>
     <div class="score">
       Score: {{ score }}
     </div>
