@@ -1,53 +1,72 @@
 <template>
   <div class="">
-    <h1 id="game_slogan" v-if="!display" style="display: block">
-    How fancy are your fingers?
-  </h1>
-  <div class="gameBar">
-    <div class="timer" v-if="display" style="opacity: 1">
-      {{ `Timer: ${count} sec` }}
+    <h1 id="game_slogan" v-if="!state.display" style="display: block">
+      How fancy are your fingers?
+    </h1>
+    <div class="gameBar">
+      <div class="timer" v-if="state.display" style="opacity: 1">
+        {{ `Timer: ${state.count} sec` }}
+      </div>
+      <p
+        v-if="state.display"
+        style="
+          opacity: 1;
+          background-color: yellow;
+          color: #000;
+          padding: 1rem;
+          font-weight: 900;
+        "
+      >
+        Press enter to submit progress
+      </p>
+      <div class="score">Score: {{ score }}</div>
     </div>
-    <p v-if="display" style="opacity: 1;
-    background-color: yellow;
-    color: #000;
-    padding: 1rem;
-    font-weight: 900;
-    ">Press enter to submit progress</p>
-    <div class="score">
-      Score: {{ score }}
+    <div v-if="state.display" style="display: block">
+      <span
+        v-bind:class="{
+          correct: word.correct,
+          wrong: word.wrong,
+          pending: word.pending,
+        }"
+        :key="word.position"
+        v-for="word in state.fetchedText"
+        >{{ word.text }} {{ "" }}</span
+      >
     </div>
-  </div>
-  <div v-if="display" style="display: block">
-    <span
-      v-bind:class="{
-        correct: word.correct,
-        wrong: word.wrong,
-        pending: word.pending,
-      }"
-      :key="word.position"
-      v-for="word in fetchedText"
-      >{{ word.text }} {{ "" }}</span
+    <textarea
+      name=""
+      id=""
+      cols="30"
+      rows="10"
+      @keyup.space="processInput($event)"
+      @keyup.enter="submitProgress($event)"
+      v-if="state.display"
+      style="display: block"
+    ></textarea>
+    <button
+      @click="fetchData(), runTimer()"
+      id="startButton"
+      v-if="!state.display"
+      style="display: inline"
     >
-  </div>
-  <textarea
-    name=""
-    id=""
-    cols="30"
-    rows="10"
-    @keyup.space="processInput($event)"
-    @keyup.enter="submitProgress($event)"
-    v-if="display"
-    style="display: block"
-  ></textarea>
-  <button @click="fetchData(), runTimer()" id="startButton" v-if="!display" style="display: inline">Start game</button>
-  <button @click="stopTimer(), this.index = 0;" id="stopButton" v-if="display" style="display: inline">Quit</button>
+      Start game
+    </button>
+    <button
+      @click="stopTimer(), (state.index = 0)"
+      id="stopButton"
+      v-if="state.display"
+      style="display: inline"
+    >
+      Quit
+    </button>
   </div>
 </template>
 
 <script>
+import { reactive, computed } from "vue";
 export default {
-  data() {
-    return {
+  setup() {
+    const state = reactive({
       inputValue: "",
       index: 0,
       display: false,
@@ -58,23 +77,21 @@ export default {
         "she_loves_me.txt",
         "when_I_find_you.txt",
       ],
-    };
-    
-  },
-  computed: {
-    score(){
-      return `${this.fetchedText.filter((word) => word.correct).length} / ${this.fetchedText.length}`
-    }
-  }
-  ,
-  methods: {
-    randPoem(){
-      let r = Math.floor(Math.random() * this.poems.length)
+    });
+
+    let score = computed(() => {
+      return `${state.fetchedText.filter((word) => word.correct).length} / ${
+        state.fetchedText.length
+      }`;
+    });
+
+    function randPoem() {
+      let r = Math.floor(Math.random() * state.poems.length);
       return r;
-    },
-    async fetchData() {
-      const response = await fetch(`text/${this.poems[this.randPoem()]}`);
-      const data = await response.text();
+    }
+    async function fetchData() {
+      let response = await fetch(`text/${state.poems[randPoem()]}`);
+      let data = await response.text();
       let obj = data
         .trim()
         // Include non space characters including \r or \n
@@ -89,78 +106,91 @@ export default {
             myTimer: "",
           };
         });
-      return (this.fetchedText = obj);
-    },
-    runTimer() {
-      this.display = true;
-      this.index = 0
-      this.myTimer = setInterval(() => {
-        ++this.count;
+      return (state.fetchedText = obj);
+    }
+
+    function runTimer() {
+      state.display = true;
+      state.index = 0;
+      state.myTimer = setInterval(() => {
+        ++state.count;
       }, 1000);
-    },
-    stopTimer() {
-      this.count = 0;
-      this.display = false;
-      clearInterval(this.myTimer);
-    },
-    submitProgress(event){
+    }
+    function stopTimer() {
+      state.count = 0;
+      state.display = false;
+      clearInterval(state.myTimer);
+    }
+    function submitProgress(event) {
       event.preventDefault();
       // Include non space characters including \r or \n
-      this.inputValue = event.target.value.trim().split(/\s+/);
-      this.stopTimer()
+      state.inputValue = event.target.value.trim().split(/\s+/);
+      state.stopTimer();
 
       //To avoid index error
-      if (this.index >= this.fetchedText.length) {
-        this.display = false;
+      if (state.index >= state.fetchedText.length) {
+        state.display = false;
         return;
       }
       if (
-        this.fetchedText[this.index].text ===
-        this.inputValue[this.inputValue.length - 1]
+        state.fetchedText[state.index].text ===
+        state.inputValue[state.inputValue.length - 1]
       ) {
         //correct answer
-        this.fetchedText[this.index].correct = true;
-        this.fetchedText[this.index].wrong = false;
-        this.fetchedText[this.index].pending = false;
+        state.fetchedText[state.index].correct = true;
+        state.fetchedText[state.index].wrong = false;
+        state.fetchedText[state.index].pending = false;
       } else {
         //wrong answer
-        this.fetchedText[this.index].correct = false;
-        this.fetchedText[this.index].wrong = true;
-        this.fetchedText[this.index].pending = false;
+        state.fetchedText[state.index].correct = false;
+        state.fetchedText[state.index].wrong = true;
+        state.fetchedText[state.index].pending = false;
       }
-      
-      ++this.index
-    },
-    processInput(event) {
+
+      ++state.index;
+    }
+
+    function processInput(event) {
       event.preventDefault();
       // Include non space characters including \r or \n
-      this.inputValue = event.target.value.trim().split(/\s+/);
+      state.inputValue = event.target.value.trim().split(/\s+/);
 
-      if (this.inputValue === "") {
+      if (state.inputValue === "") {
         return;
       }
       //To avoid index error
-      if (this.index >= this.fetchedText.length) {
-        this.display = false;
+      if (state.index >= state.fetchedText.length) {
+        state.display = false;
         return;
       }
       if (
-        this.fetchedText[this.index].text ===
-        this.inputValue[this.inputValue.length - 1]
+        state.fetchedText[state.index].text ===
+        state.inputValue[state.inputValue.length - 1]
       ) {
         //correct answer
-        this.fetchedText[this.index].correct = true;
-        this.fetchedText[this.index].wrong = false;
-        this.fetchedText[this.index].pending = false;
+        state.fetchedText[state.index].correct = true;
+        state.fetchedText[state.index].wrong = false;
+        state.fetchedText[state.index].pending = false;
       } else {
         //wrong answer
-        this.fetchedText[this.index].correct = false;
-        this.fetchedText[this.index].wrong = true;
-        this.fetchedText[this.index].pending = false;
+        state.fetchedText[state.index].correct = false;
+        state.fetchedText[state.index].wrong = true;
+        state.fetchedText[state.index].pending = false;
       }
-      
-      ++this.index
-    },
+
+      ++state.index;
+    }
+
+    return {
+      state,
+      score,
+      randPoem,
+      fetchData,
+      runTimer,
+      stopTimer,
+      submitProgress,
+      processInput,
+    };
   },
 };
 </script>
@@ -198,7 +228,7 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
-    .timer{
+    .timer {
       opacity: 0;
     }
     .score,
@@ -241,10 +271,10 @@ textarea {
     color: #757272;
     margin: auto;
   }
-  #startButton{
+  #startButton {
     display: none;
   }
-  #stopButton{
+  #stopButton {
     display: none;
   }
 }
