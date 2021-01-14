@@ -1,8 +1,9 @@
 <template>
-  <div class="">
+  <div>
     <h1 id="game_slogan" v-if="!state.display" style="display: block">
       How fancy are your fingers?
     </h1>
+    <p><em>Note: </em> This project works only on physical keyboard, not touch screen.</p>
     <div class="gameBar">
       <div class="timer" v-if="state.display" style="opacity: 1">
         {{ `Timer: ${state.count} sec` }}
@@ -125,8 +126,7 @@ export default {
       event.preventDefault();
       // Include non space characters including \r or \n
       state.inputValue = event.target.value.trim().split(/\s+/);
-      state.stopTimer();
-
+      this.stopTimer()
       //To avoid index error
       if (state.index >= state.fetchedText.length) {
         state.display = false;
