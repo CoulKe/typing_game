@@ -1,9 +1,9 @@
+## Demo
+![Speed typing game](demo.gif)
+
 # Typing Game
 A project made with vue js and uses fetch Api to randomly
 generate text to test your typing speed.
-
-## Demo
-![Speed typing game](demo.gif)
 
 For ```options api``` implementation check the options-api branch.
 Main branch uses ```composition api```
