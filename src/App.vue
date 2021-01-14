@@ -1,8 +1,9 @@
 <template>
-  <div class="">
+  <div>
     <h1 id="game_slogan" v-if="!state.display" style="display: block">
       How fancy are your fingers?
     </h1>
+    <p><em>Note: </em> This project works only on physical keyboard, not touch screen.</p>
     <div class="gameBar">
       <div class="timer" v-if="state.display" style="opacity: 1">
         {{ `Timer: ${state.count} sec` }}
@@ -78,13 +79,11 @@ export default {
         "when_I_find_you.txt",
       ],
     });
-
     let score = computed(() => {
       return `${state.fetchedText.filter((word) => word.correct).length} / ${
         state.fetchedText.length
       }`;
     });
-
     function randPoem() {
       let r = Math.floor(Math.random() * state.poems.length);
       return r;
@@ -108,7 +107,6 @@ export default {
         });
       return (state.fetchedText = obj);
     }
-
     function runTimer() {
       state.display = true;
       state.index = 0;
@@ -125,8 +123,7 @@ export default {
       event.preventDefault();
       // Include non space characters including \r or \n
       state.inputValue = event.target.value.trim().split(/\s+/);
-      state.stopTimer();
-
+      this.stopTimer()
       //To avoid index error
       if (state.index >= state.fetchedText.length) {
         state.display = false;
@@ -146,15 +143,12 @@ export default {
         state.fetchedText[state.index].wrong = true;
         state.fetchedText[state.index].pending = false;
       }
-
       ++state.index;
     }
-
     function processInput(event) {
       event.preventDefault();
       // Include non space characters including \r or \n
       state.inputValue = event.target.value.trim().split(/\s+/);
-
       if (state.inputValue === "") {
         return;
       }
@@ -177,10 +171,8 @@ export default {
         state.fetchedText[state.index].wrong = true;
         state.fetchedText[state.index].pending = false;
       }
-
       ++state.index;
     }
-
     return {
       state,
       score,
@@ -212,7 +204,6 @@ body {
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0px 0px 10px #929292;
-
   button {
     font-weight: bold;
     color: #fff;
@@ -254,13 +245,11 @@ body {
     border-bottom: 2px dotted #ff0000;
   }
 }
-
 textarea {
   width: 99%;
   max-width: 800px;
   border-radius: 8px;
   display: none;
-
   &:focus {
     outline: 2px solid #03bcdd;
     border-radius: 0px;
